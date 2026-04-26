@@ -33,3 +33,4 @@ steps:
 
 images:
   - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
+# Forced trigger update
