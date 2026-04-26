@@ -1,0 +1,323 @@
+/* ─── Container ─────────────────────────────────────────────── */
+.simulator-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeInUp 0.55s ease both;
+}
+
+.simulator-header { text-align: center; }
+
+.simulator-header h2 {
+  background: var(--gradient-text);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.simulator-header p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* ─── Simulator Card ─────────────────────────────────────────── */
+.simulator-card {
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1.5px solid rgba(34,197,94,0.22);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 48px rgba(34,197,94,0.08);
+  padding: 2rem;
+}
+
+/* Animated green top bar */
+.simulator-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+/* Subtle green inner glow at top */
+.simulator-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 110px;
+  background: linear-gradient(180deg, rgba(34,197,94,0.05) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ─── Phase ─────────────────────────────────────────────────── */
+.phase-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.text-center { text-align: center; }
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Instruction banner ─────────────────────────────────────── */
+.instruction {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--primary-dark);
+  font-weight: 500;
+  font-size: 0.9rem;
+  background: rgba(34,197,94,0.10);
+  padding: 0.8rem 1rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(34,197,94,0.22);
+}
+
+/* ─── EVM Machine ─────────────────────────────────────────────── */
+.evm-machine {
+  background: linear-gradient(160deg, #1A2E1C 0%, #0D1F0F 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.4),
+    0 20px 60px rgba(0,0,0,0.3),
+    0 0 0 2px #052E16;
+  position: relative;
+  overflow: hidden;
+}
+
+/* EVM label watermark */
+.evm-machine::before {
+  content: 'EVM';
+  position: absolute;
+  top: 0.55rem; right: 0.9rem;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: rgba(74,222,128,0.2);
+}
+
+/* Scanlines */
+.evm-machine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255,255,255,0.012) 3px,
+    rgba(255,255,255,0.012) 4px
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ─── EVM Row ─────────────────────────────────────────────────── */
+.evm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  padding: 1.1rem 1.4rem;
+  border-radius: var(--border-radius-sm);
+  border: 2px solid #E5E7EB;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  user-select: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* Green left-bar hover indicator */
+.evm-row:hover {
+  border-color: rgba(34,197,94,0.50);
+  background: #F0FDF4;
+  transform: translateX(5px);
+  box-shadow: -4px 0 0 rgba(34,197,94,0.55), 0 4px 18px rgba(34,197,94,0.14);
+}
+
+.evm-row.selected {
+  border-color: var(--primary-color);
+  background: #F0FDF4;
+  transform: translateX(5px);
+  box-shadow:
+    -4px 0 0 var(--primary-color),
+    0 0 0 3px rgba(34,197,94,0.13),
+    0 4px 18px rgba(34,197,94,0.18);
+}
+
+/* ─── Candidate Info ─────────────────────────────────────────── */
+.evm-candidate-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.candidate-symbol {
+  font-size: 1.9rem;
+  width: 48px;
+  text-align: center;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  transition: transform var(--transition-fast);
+}
+
+.evm-row:hover .candidate-symbol,
+.evm-row.selected .candidate-symbol { transform: scale(1.12); }
+
+.candidate-details { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.candidate-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #052E16;
+  line-height: 1.2;
+}
+
+.candidate-party {
+  font-size: 0.8rem;
+  color: #16A34A;
+}
+
+/* ─── EVM Button (red press button) ─────────────────────────── */
+.evm-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #F87171, #DC2626);
+  border: 2px solid #991B1B;
+  box-shadow: inset 0 1px 3px rgba(255,255,255,0.3), 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.evm-row.selected .evm-button {
+  background: radial-gradient(circle at 35% 35%, #FCA5A5, #EF4444);
+  box-shadow: 0 0 14px rgba(239,68,68,0.75), inset 0 1px 3px rgba(255,255,255,0.3);
+  animation: pulseGreen 1.6s infinite;
+}
+
+/* ─── Vote Button ─────────────────────────────────────────────── */
+.btn-large {
+  width: 100%;
+  padding: 1.05rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: var(--border-radius-pill);
+}
+
+/* ─── Confirmation Box ─────────────────────────────────────────── */
+.confirmation-box {
+  background: rgba(240,253,244,0.80);
+  backdrop-filter: blur(12px);
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  border: 2px dashed rgba(34,197,94,0.38);
+  margin: 0.5rem 0;
+  animation: scaleIn 0.45s var(--transition-spring) both;
+}
+
+.large-symbol {
+  font-size: 4.5rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: float 2.8s ease-in-out infinite;
+}
+
+.highlight-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin: 0.5rem 0;
+}
+
+/* ─── Success ────────────────────────────────────────────────── */
+.success-check {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
+  box-shadow:
+    0 8px 28px rgba(34,197,94,0.40),
+    0 0 0 14px rgba(34,197,94,0.10),
+    0 0 0 28px rgba(34,197,94,0.05);
+  animation: scaleIn 0.55s var(--transition-spring) both;
+}
+
+/* ─── Quote Card ─────────────────────────────────────────────── */
+.vote-quote-card {
+  background: linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(74,222,128,0.04) 60%, rgba(134,239,172,0.03) 100%);
+  border: 1px solid rgba(34,197,94,0.18);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem 2rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  animation: fadeInUp 0.55s ease 0.3s both;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 4px 20px rgba(34,197,94,0.06);
+}
+
+.vote-quote-card::before {
+  content: '"';
+  position: absolute;
+  top: -10px; left: 16px;
+  font-size: 7rem;
+  color: var(--primary-color);
+  opacity: 0.08;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.vote-quote-card p {
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: 1.7;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Misc ───────────────────────────────────────────────────── */
+.mt-4 { margin-top: 1.5rem; }
+.spin  { animation: spin 0.9s linear infinite; }
+
+@media (max-width: 768px) {
+  .simulator-card { padding: 1.25rem; }
+  .evm-machine    { padding: 0.9rem; }
+  .candidate-symbol { font-size: 1.55rem; width: 38px; }
+}
