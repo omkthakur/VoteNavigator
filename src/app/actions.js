@@ -13,13 +13,15 @@ export async function getManifestosAction(location, languageCode = 'en') {
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
-    console.error('GEMINI_API_KEY is not configured on the server.');
-    throw new Error('AI Service is temporarily unavailable. Please try again later.');
+    console.error('[GEMINI ERROR] API Key is missing on server. Check Cloud Run Env Vars.');
+    throw new Error('AI Service configuration missing.');
   }
+
+  console.log('[GEMINI INFO] Fetching manifestos for:', location);
 
   const genAI = new GoogleGenAI({ apiKey });
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-2.0-flash', // Using 2.0-flash as it's standard
+    model: 'gemini-2.5-flash', 
     tools: [{ googleSearch: {} }] 
   });
 
@@ -52,9 +54,10 @@ export async function getManifestosAction(location, languageCode = 'en') {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    console.log('[GEMINI SUCCESS] Received response from AI');
     return parseAndValidateAIResponse(text, 'manifesto');
   } catch (error) {
-    console.error('Gemini Server Action Error:', error);
+    console.error('[GEMINI ERROR] Detailed Error:', error.message || error);
     throw new Error('Failed to fetch data from AI service.');
   }
 }
