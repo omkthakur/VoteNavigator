@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FileText, MapPin, Calendar, CheckCircle2, XCircle, BarChart3, Navigation, Loader2, AlertCircle } from 'lucide-react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { fetchSIRDetails } from '@/utils/gemini';
+import { getSIRDetailsAction } from '@/app/actions';
 import { checkEligibility } from '@/utils/eligibility';
 import { trackEvent, GA_EVENTS } from '@/utils/analytics';
 import useGeolocation from '@/hooks/useGeolocation';
@@ -60,7 +60,7 @@ export default function ToolsPage() {
     setSirData(null);
     setSirFetched(true);
     try {
-      const data = await fetchSIRDetails(locationToUse, i18n.language || 'en');
+      const data = await getSIRDetailsAction(locationToUse, i18n.language || 'en');
       setSirData(data);
     } catch {
       setSirError(t('sir_error', 'Unable to fetch SIR data. Please try again later.'));

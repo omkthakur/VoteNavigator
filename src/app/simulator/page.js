@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Info, Loader2 } from 'lucide-react';
-import { fetchManifestosForLocation } from '@/utils/gemini';
+import { getManifestosAction } from '@/app/actions';
 import { trackEvent, GA_EVENTS } from '@/utils/analytics';
 import useGeolocation from '@/hooks/useGeolocation';
 import '../Simulator.css';
@@ -32,7 +32,7 @@ export default function SimulatorPage() {
     let cancelled = false;
     const fetchParties = async () => {
       try {
-        const data = await fetchManifestosForLocation(locationStr, i18n.language || 'en');
+        const data = await getManifestosAction(locationStr, i18n.language || 'en');
         if (cancelled) return;
         if (data && data.length > 0) {
           const dynamicCandidates = data.map((p, index) => ({

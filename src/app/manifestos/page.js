@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Loader2, Navigation } from 'lucide-react';
-import { fetchManifestosForLocation } from '@/utils/gemini';
+import { Loader2, Navigation, Sparkles } from 'lucide-react';
+import { getManifestosAction } from '@/app/actions';
 import { trackEvent, GA_EVENTS } from '@/utils/analytics';
 import useGeolocation from '@/hooks/useGeolocation';
 import '../Tools.css';
@@ -33,7 +33,7 @@ export default function ManifestosPage() {
 
     try {
       trackEvent(GA_EVENTS.FETCH_MANIFESTOS, { location: locationToUse, language: i18n.language });
-      const data = await fetchManifestosForLocation(locationToUse, i18n.language || 'en');
+      const data = await getManifestosAction(locationToUse, i18n.language || 'en');
       setManifestos(data);
     } catch {
       setManifestoError(t('manifesto_error', 'Unable to fetch party manifestos. Please try again later.'));
