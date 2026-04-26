@@ -24,7 +24,7 @@ steps:
       - '--image'
       - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
       - '--region'
-      - 'asia-south1'
+      - '${_DEPLOY_REGION:-europe-west1}'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
