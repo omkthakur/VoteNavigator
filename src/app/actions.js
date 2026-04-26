@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/generative-ai';
 import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
 
 /**
@@ -19,9 +19,9 @@ export async function getManifestosAction(location, languageCode = 'en') {
 
   console.log('[GEMINI INFO] Fetching manifestos for:', location);
 
-  const genAI = new GoogleGenAI({ apiKey });
+  const genAI = new GoogleGenAI(apiKey);
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-2.5-flash', 
+    model: 'gemini-1.5-flash', 
     tools: [{ googleSearch: {} }] 
   });
 
@@ -72,9 +72,9 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     throw new Error('AI Service configuration missing.');
   }
 
-  const genAI = new GoogleGenAI({ apiKey });
+  const genAI = new GoogleGenAI(apiKey);
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-2.0-flash',
+    model: 'gemini-1.5-flash',
     tools: [{ googleSearch: {} }] 
   });
 
