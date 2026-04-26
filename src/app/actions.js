@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
 
 /**
@@ -19,7 +19,7 @@ export async function getManifestosAction(location, languageCode = 'en') {
 
   console.log('[GEMINI INFO] Fetching manifestos for:', location);
 
-  const genAI = new GoogleGenAI(apiKey);
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
     model: 'gemini-1.5-flash', 
     tools: [{ googleSearch: {} }] 
