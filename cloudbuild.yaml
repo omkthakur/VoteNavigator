@@ -1,0 +1,37 @@
+steps:
+  # Step 1: Build the container image with build-args
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--network=host'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_GEMINI_API_KEY=${_NEXT_PUBLIC_GEMINI_API_KEY}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
+      - '.'
+
+  # Step 2: Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA']
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'votenavigator'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
+      - '--region'
+      - 'asia-south1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'NEXT_PUBLIC_GEMINI_API_KEY=${_NEXT_PUBLIC_GEMINI_API_KEY},NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
+
+images:
+  - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
