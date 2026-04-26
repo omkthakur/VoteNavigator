@@ -12,14 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variables for build time if needed
-# Note: NEXT_PUBLIC_ variables are baked in at build time.
-# If you want to use the same image for different environments, 
-# you might need a different strategy, but for now we'll assume 
-# these are set via Cloud Run build args or secrets.
-ARG NEXT_PUBLIC_GEMINI_API_KEY
+# Set environment variables for build time
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
-ENV NEXT_PUBLIC_GEMINI_API_KEY=$NEXT_PUBLIC_GEMINI_API_KEY
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 RUN npm run build

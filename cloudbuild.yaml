@@ -7,8 +7,6 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
       - '--build-arg'
-      - 'NEXT_PUBLIC_GEMINI_API_KEY=${_NEXT_PUBLIC_GEMINI_API_KEY}'
-      - '--build-arg'
       - 'NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
       - '.'
 
@@ -31,7 +29,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'NEXT_PUBLIC_GEMINI_API_KEY=${_NEXT_PUBLIC_GEMINI_API_KEY},NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
+      - 'GEMINI_API_KEY=${_GEMINI_API_KEY},NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
 
 images:
   - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
