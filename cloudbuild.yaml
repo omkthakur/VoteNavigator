@@ -3,6 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
+      - '--network=host'
       - '-t'
       - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
       - '--build-arg'
@@ -23,19 +24,12 @@ steps:
       - '--image'
       - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
       - '--region'
-      - '${_DEPLOY_REGION:-europe-west1}'
+      - 'asia-south1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--timeout'
-      - '10m'
-      - '--memory'
-      - '1Gi'
-      - '--cpu'
-      - '1'
       - '--set-env-vars'
       - 'GEMINI_API_KEY=${_GEMINI_API_KEY},NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
 
 images:
   - 'gcr.io/$PROJECT_ID/votenavigator:$COMMIT_SHA'
-# Forced trigger update
