@@ -8,21 +8,19 @@ import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
  * This avoids the need for NEXT_PUBLIC_ variables at build time.
  */
 export async function getManifestosAction(location, languageCode = 'en') {
-  // Use the server-side environment variable (no NEXT_PUBLIC_ prefix needed)
-  // but we'll check both to be compatible with existing setups.
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
-    console.error('[GEMINI ERROR] API Key is missing on server. Check Cloud Run Env Vars.');
+    console.error('[GEMINI ERROR] API Key is missing on server.');
     throw new Error('AI Service configuration missing.');
   }
 
-  console.log('[GEMINI INFO] Fetching manifestos for:', location);
-
+  // Use a more robust model configuration
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash', 
-    tools: [{ googleSearch: {} }] 
+    model: 'gemini-1.5-flash'
+    // Temporarily disabling googleSearch to verify if it's the cause of failure in certain regions
+    // tools: [{ googleSearch: {} }] 
   });
 
   const safeLocation = sanitizeLocation(location);
@@ -38,14 +36,14 @@ export async function getManifestosAction(location, languageCode = 'en') {
     
     IMPORTANT: You MUST write the ENTIRE response (partyName and manifestoSummary) in ${targetLanguage}.
     
-    You MUST return the data STRICTLY as a JSON array of objects. Do not include markdown fences.
+    Return the data STRICTLY as a JSON array of objects.
     
     Format:
     [
       {
-        "partyName": "Name in ${targetLanguage}",
+        "partyName": "Name",
         "symbol": "Emoji",
-        "manifestoSummary": "2-3 sentences in ${targetLanguage}"
+        "manifestoSummary": "2-3 sentences"
       }
     ]
   `;
@@ -54,11 +52,16 @@ export async function getManifestosAction(location, languageCode = 'en') {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    console.log('[GEMINI SUCCESS] Received response from AI');
+    
+    if (!text) {
+      throw new Error('Empty response from AI');
+    }
+
     return parseAndValidateAIResponse(text, 'manifesto');
   } catch (error) {
     console.error('[GEMINI ERROR] Detailed Error:', error.message || error);
-    throw new Error('Failed to fetch data from AI service.');
+    // If it's a safety block or other AI error, we provide a more descriptive error
+    throw new Error(error.message || 'Failed to fetch data from AI service.');
   }
 }
 
@@ -74,8 +77,8 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
-    tools: [{ googleSearch: {} }] 
+    model: 'gemini-1.5-flash'
+    // tools: [{ googleSearch: {} }] 
   });
 
   const safeLocation = sanitizeLocation(location);
@@ -90,12 +93,12 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     
     IMPORTANT: You MUST write the ENTIRE response in ${targetLanguage}.
     
-    You MUST return the data STRICTLY as a JSON object. Do not include markdown fences.
+    Return the data STRICTLY as a JSON object.
     
     Format:
     {
-      "title": "Title in ${targetLanguage}",
-      "overview": "2-3 sentences in ${targetLanguage}",
+      "title": "Title",
+      "overview": "2-3 sentences",
       "thingsToKnow": ["Point 1", "Point 2"],
       "documentsNeeded": ["Doc 1", "Doc 2"]
     }
@@ -107,7 +110,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     const text = response.text();
     return parseAndValidateAIResponse(text, 'sir');
   } catch (error) {
-    console.error('Gemini SIR Action Error:', error);
-    throw new Error('Failed to fetch SIR details.');
+    console.error('Gemini SIR Action Error:', error.message || error);
+    throw new Error(error.message || 'Failed to fetch SIR details.');
   }
 }

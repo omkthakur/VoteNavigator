@@ -71,12 +71,27 @@ export const validateSIRResponse = (data) => {
  * @returns {unknown}
  */
 export const parseAndValidateAIResponse = (rawText, schema) => {
-  const cleaned = rawText
-    .replace(/```json/gi, '')
-    .replace(/```/g, '')
-    .trim();
-  const parsed = JSON.parse(cleaned);
-  if (schema === 'manifesto') return validateManifestoResponse(parsed);
-  if (schema === 'sir') return validateSIRResponse(parsed);
-  return parsed;
+  try {
+    // Find the first occurrence of [ or { and the last occurrence of ] or }
+    const startChar = schema === 'manifesto' ? '[' : '{';
+    const endChar = schema === 'manifesto' ? ']' : '}';
+    
+    const startIndex = rawText.indexOf(startChar);
+    const endIndex = rawText.lastIndexOf(endChar);
+    
+    if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+      console.error('[PARSER ERROR] No JSON structure found in text:', rawText);
+      throw new Error('Invalid AI response format');
+    }
+    
+    const jsonStr = rawText.substring(startIndex, endIndex + 1);
+    const parsed = JSON.parse(jsonStr);
+    
+    if (schema === 'manifesto') return validateManifestoResponse(parsed);
+    if (schema === 'sir') return validateSIRResponse(parsed);
+    return parsed;
+  } catch (error) {
+    console.error('[PARSER ERROR] Failed to parse AI response:', error.message);
+    throw error;
+  }
 };
