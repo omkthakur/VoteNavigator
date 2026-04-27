@@ -72,7 +72,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     throw new Error('AI Service configuration missing.');
   }
 
-  const genAI = new GoogleGenAI(apiKey);
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
     model: 'gemini-1.5-flash',
     tools: [{ googleSearch: {} }] 
