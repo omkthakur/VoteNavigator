@@ -13,8 +13,10 @@ export async function getManifestosAction(location, languageCode = 'en') {
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
-    console.error('[ERROR] GEMINI_API_KEY is missing');
+    console.error('[ERROR] GEMINI_API_KEY is TOTALLY MISSING from process.env');
     throw new Error('AI Service configuration missing.');
+  } else {
+    console.log(`[DEBUG] API Key found (length: ${apiKey.length}, starts with: ${apiKey.substring(0, 3)}...)`);
   }
 
   const genAI = new GoogleGenAI({ apiKey });
