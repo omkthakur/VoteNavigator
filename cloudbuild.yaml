@@ -28,6 +28,10 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--timeout'
+      - '10m'
+      - '--memory'
+      - '512Mi'
       - '--set-env-vars'
       - 'GEMINI_API_KEY=${_GEMINI_API_KEY},NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
 
