@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
 
 /**
@@ -8,19 +8,18 @@ import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
  * This avoids the need for NEXT_PUBLIC_ variables at build time.
  */
 export async function getManifestosAction(location, languageCode = 'en') {
+  console.log(`[ACTION] Fetching manifestos for: ${location} (${languageCode})`);
+  
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
-    console.error('[GEMINI ERROR] API Key is missing on server.');
+    console.error('[ERROR] GEMINI_API_KEY is missing');
     throw new Error('AI Service configuration missing.');
   }
 
-  // Use a more robust model configuration
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const genAI = new GoogleGenAI({ apiKey });
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash'
-    // Temporarily disabling googleSearch to verify if it's the cause of failure in certain regions
-    // tools: [{ googleSearch: {} }] 
+    model: 'gemini-1.5-flash',
   });
 
   const safeLocation = sanitizeLocation(location);
@@ -36,14 +35,14 @@ export async function getManifestosAction(location, languageCode = 'en') {
     
     IMPORTANT: You MUST write the ENTIRE response (partyName and manifestoSummary) in ${targetLanguage}.
     
-    Return the data STRICTLY as a JSON array of objects.
+    You MUST return the data STRICTLY as a JSON array of objects. Do not include markdown fences.
     
     Format:
     [
       {
-        "partyName": "Name",
+        "partyName": "Name in ${targetLanguage}",
         "symbol": "Emoji",
-        "manifestoSummary": "2-3 sentences"
+        "manifestoSummary": "2-3 sentences in ${targetLanguage}"
       }
     ]
   `;
@@ -52,16 +51,10 @@ export async function getManifestosAction(location, languageCode = 'en') {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
-    if (!text) {
-      throw new Error('Empty response from AI');
-    }
-
     return parseAndValidateAIResponse(text, 'manifesto');
   } catch (error) {
-    console.error('[GEMINI ERROR] Detailed Error:', error.message || error);
-    // If it's a safety block or other AI error, we provide a more descriptive error
-    throw new Error(error.message || 'Failed to fetch data from AI service.');
+    console.error('Gemini Server Action Error:', error);
+    throw new Error('Failed to fetch data from AI service.');
   }
 }
 
@@ -69,16 +62,18 @@ export async function getManifestosAction(location, languageCode = 'en') {
  * Server-side function to fetch Special Intensive Revision (SIR) details.
  */
 export async function getSIRDetailsAction(location, languageCode = 'en') {
+  console.log(`[ACTION] Fetching SIR details for: ${location} (${languageCode})`);
+
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
+    console.error('[ERROR] GEMINI_API_KEY is missing for SIR');
     throw new Error('AI Service configuration missing.');
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const genAI = new GoogleGenAI({ apiKey });
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash'
-    // tools: [{ googleSearch: {} }] 
+    model: 'gemini-1.5-flash',
   });
 
   const safeLocation = sanitizeLocation(location);
@@ -93,12 +88,12 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     
     IMPORTANT: You MUST write the ENTIRE response in ${targetLanguage}.
     
-    Return the data STRICTLY as a JSON object.
+    You MUST return the data STRICTLY as a JSON object. Do not include markdown fences.
     
     Format:
     {
-      "title": "Title",
-      "overview": "2-3 sentences",
+      "title": "Title in ${targetLanguage}",
+      "overview": "2-3 sentences in ${targetLanguage}",
       "thingsToKnow": ["Point 1", "Point 2"],
       "documentsNeeded": ["Doc 1", "Doc 2"]
     }
@@ -110,7 +105,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     const text = response.text();
     return parseAndValidateAIResponse(text, 'sir');
   } catch (error) {
-    console.error('Gemini SIR Action Error:', error.message || error);
-    throw new Error(error.message || 'Failed to fetch SIR details.');
+    console.error('Gemini SIR Action Error:', error);
+    throw new Error('Failed to fetch SIR details.');
   }
 }
