@@ -1,7 +1,7 @@
 "use server";
 
 import { GoogleGenAI } from '@google/genai';
-import { sanitizeLocation, parseAndValidateAIResponse } from '@/utils/security';
+import { sanitizeLocation, parseAndValidateAIResponse } from '../utils/security.js';
 
 /**
  * Server-side function to fetch political party manifestos using Gemini.
@@ -19,10 +19,7 @@ export async function getManifestosAction(location, languageCode = 'en') {
     console.log(`[DEBUG] API Key found (length: ${apiKey.length}, starts with: ${apiKey.substring(0, 3)}...)`);
   }
 
-  const genAI = new GoogleGenAI({ apiKey });
-  const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
-  });
+  const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
 
   const safeLocation = sanitizeLocation(location);
   const targetLanguage = {
@@ -50,9 +47,11 @@ export async function getManifestosAction(location, languageCode = 'en') {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    });
+    const text = result?.text || '';
     return parseAndValidateAIResponse(text, 'manifesto');
   } catch (error) {
     console.error('Gemini Server Action Error:', error);
@@ -73,10 +72,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     throw new Error('AI Service configuration missing.');
   }
 
-  const genAI = new GoogleGenAI({ apiKey });
-  const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
-  });
+  const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
 
   const safeLocation = sanitizeLocation(location);
   const targetLanguage = {
@@ -102,9 +98,11 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    });
+    const text = result?.text || '';
     return parseAndValidateAIResponse(text, 'sir');
   } catch (error) {
     console.error('Gemini SIR Action Error:', error);
