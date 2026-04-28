@@ -60,8 +60,9 @@ export default function ToolsPage() {
     setSirData(null);
     setSirFetched(true);
     try {
-      const data = await getSIRDetailsAction(locationToUse, i18n.language || 'en');
-      setSirData(data);
+      const result = await getSIRDetailsAction(locationToUse, i18n.language || 'en');
+      if (result.error) throw new Error(result.error);
+      setSirData(result.data);
     } catch {
       setSirError(t('sir_error', 'Unable to fetch SIR data. Please try again later.'));
     } finally {

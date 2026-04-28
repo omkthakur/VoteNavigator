@@ -52,10 +52,10 @@ export async function getManifestosAction(location, languageCode = 'en') {
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';
-    return parseAndValidateAIResponse(text, 'manifesto');
+    return { data: parseAndValidateAIResponse(text, 'manifesto') };
   } catch (error) {
     console.error('Gemini Server Action Error:', error);
-    throw new Error('Failed to fetch data from AI service.');
+    return { error: error.message || 'Failed to fetch data from AI service.' };
   }
 }
 
@@ -103,9 +103,9 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';
-    return parseAndValidateAIResponse(text, 'sir');
+    return { data: parseAndValidateAIResponse(text, 'sir') };
   } catch (error) {
     console.error('Gemini SIR Action Error:', error);
-    throw new Error('Failed to fetch SIR details.');
+    return { error: error.message || 'Failed to fetch SIR details.' };
   }
 }

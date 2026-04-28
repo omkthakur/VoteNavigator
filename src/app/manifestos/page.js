@@ -33,8 +33,9 @@ export default function ManifestosPage() {
 
     try {
       trackEvent(GA_EVENTS.FETCH_MANIFESTOS, { location: locationToUse, language: i18n.language });
-      const data = await getManifestosAction(locationToUse, i18n.language || 'en');
-      setManifestos(data);
+      const result = await getManifestosAction(locationToUse, i18n.language || 'en');
+      if (result.error) throw new Error(result.error);
+      setManifestos(result.data || []);
     } catch {
       setManifestoError(t('manifesto_error', 'Unable to fetch party manifestos. Please try again later.'));
     } finally {

@@ -32,10 +32,12 @@ export default function SimulatorPage() {
     let cancelled = false;
     const fetchParties = async () => {
       try {
-        const data = await getManifestosAction(locationStr, i18n.language || 'en');
+        const result = await getManifestosAction(locationStr, i18n.language || 'en');
         if (cancelled) return;
-        if (data && data.length > 0) {
-          const dynamicCandidates = data.map((p, index) => ({
+        if (result && result.error) {
+          console.error('Failed to load local parties', result.error);
+        } else if (result && result.data && result.data.length > 0) {
+          const dynamicCandidates = result.data.map((p, index) => ({
             id: index + 1,
             name: `Candidate ${String.fromCharCode(65 + index)}`,
             party: p.partyName,
