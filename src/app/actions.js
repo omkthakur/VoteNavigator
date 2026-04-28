@@ -19,7 +19,7 @@ export async function getManifestosAction(location, languageCode = 'en') {
     console.log(`[DEBUG] API Key found (length: ${apiKey.length}, starts with: ${apiKey.substring(0, 3)}...)`);
   }
 
-  const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
+  const ai = new GoogleGenAI({ apiKey });
 
   const safeLocation = sanitizeLocation(location);
   const targetLanguage = {
@@ -48,7 +48,7 @@ export async function getManifestosAction(location, languageCode = 'en') {
 
   try {
     const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';
@@ -72,7 +72,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
     throw new Error('AI Service configuration missing.');
   }
 
-  const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
+  const ai = new GoogleGenAI({ apiKey });
 
   const safeLocation = sanitizeLocation(location);
   const targetLanguage = {
@@ -99,7 +99,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
 
   try {
     const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';

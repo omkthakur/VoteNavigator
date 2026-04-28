@@ -29,7 +29,7 @@ async function runDiagnostics() {
     try {
       const ai = new GoogleGenAI({ apiKey: apiKey });
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         contents: [{ role: 'user', parts: [{ text: 'Reply with the word "SUCCESS" if you receive this.' }] }],
       });
       console.log('✅ Gemini API is ONLINE and RESPONDING. Response:', response?.text || 'No text');
