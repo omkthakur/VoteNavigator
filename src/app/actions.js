@@ -48,7 +48,7 @@ export async function getManifestosAction(location, languageCode = 'en') {
 
   try {
     const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';
@@ -99,7 +99,7 @@ export async function getSIRDetailsAction(location, languageCode = 'en') {
 
   try {
     const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
     const text = result?.text || '';
